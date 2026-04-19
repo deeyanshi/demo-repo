@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>EcoBuild Enterprise</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="css/impact report.css">
+</head>
+<body>
+
+<div class="stars" id="static-stars"></div>
+<div id="shooting-stars-container"></div>
+
+<div class="card">
+    <div class="header-flex">
+        <h2>🌍 EcoBuild <span style="color: #10b981;">Enterprise</span></h2>
+        <button class="theme-toggle" onclick="toggleTheme()" id="themeIcon">🌙</button>
+    </div>
+    
+    <label>Project Area (sq meters):</label>
+    <div class="input-group">
+        <input type="number" id="areaNum" value="4992" min="1" placeholder="Enter exact square meters">
+        <span style="font-weight:bold; color:var(--text-muted);">sqm</span>
+    </div>
+    
+    <label>Primary Material:</label>
+    <select id="material" style="margin-bottom: 15px;">
+        <option value="Concrete">Concrete</option>
+        <option value="Steel">Steel</option>
+        <option value="Recycled Steel">Recycled Steel</option>
+        <option value="Timber">Timber</option>
+        <option value="Cross-Laminated Timber">Cross-Laminated Timber</option>
+        <option value="Hempcrete">Hempcrete (Carbon Negative!)</option>
+        <option value="Rammed Earth">Rammed Earth</option>
+        <option value="Bamboo">Bamboo</option>
+    </select>
+
+    <label>Supply Chain Sourcing:</label>
+    <select id="sourcing">
+        <option value="Local">Local (< 50km) - Lowest Impact</option>
+        <option value="Regional" selected>Regional (< 500km) - Standard Impact</option>
+        <option value="Imported">Imported (> 500km) - High Impact</option>
+    </select>
+
+    <button class="btn-primary" onclick="calculate()">🚀 Generate Impact Report</button>
+
+    <div id="results">
+        <div class="highlight-box">
+            <div class="grade-badge" id="gradeBadge">A</div>
+            <p style="margin: 0 0 5px 0; color: var(--text-muted); font-weight: bold; text-transform: uppercase; font-size: 13px;">Lifecycle Carbon Footprint</p>
+            <h3 class="carbon-text" id="carbonText"><span id="carbon">0</span> <small style="font-size: 20px;">kg CO₂</small></h3>
+            <div id="suggestionsBox"></div>
+        </div>
+
+        <div class="impact-grid">
+            <div class="impact-item">
+                💰 <span class="impact-number">₹<span id="cost">0</span></span>
+                <small style="color: var(--text-muted);">Est. Material Cost</small>
+            </div>
+            <div class="impact-item">
+                🌳 <span class="impact-number" id="trees">0</span>
+                <small style="color: var(--text-muted);">Trees to Offset</small>
+            </div>
+            <div class="impact-item">
+                🚗 <span class="impact-number" id="miles">0</span>
+                <small style="color: var(--text-muted);">Car Miles Eq.</small>
+            </div>
+        </div>
+
+        <canvas id="comparisonChart"></canvas>
+        
+        <div class="action-buttons">
+            <button class="btn-secondary" onclick="window.print()">📄 Print PDF Report</button>
+            <button class="btn-secondary" onclick="exportCSV()">📥 Download CSV Data</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let myChart = null;
+    let currentData = null;
+
+    function toggleTheme() {
+        const body = document.body;
+        const icon = document.getElementById('themeIcon');
+        if (body.getAttribute('data-theme') === 'dark') {
+            body.removeAttribute('data-theme');
+            icon.innerText = '🌙';
+        } else {
+            body.setAttribute('data-theme', 'dark');
+            icon.innerText = '☀️';
+        }
+        if (myChart) Chart.defaults.color = body.getAttribute('data-theme') === 'dark' ? '#f8fafc' : '#1e293b';
+    }
+
+    // NUMBER COUNTER ANIMATION
+    function animateValue(id, start, end, duration, formatStr = '') {
+        if (start === end) return;
+        let obj = document.getElementById(id);
+        let startTimestamp = null;
+        const step = (timestamp) => {
+            if (!startTimestamp) startTimestamp = timestamp;
+            const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+            let currentVal = Math.floor(progress * (end - start) + start);
+            obj.innerHTML = currentVal.toLocaleString('en-IN') + formatStr;
+            if (progress < 1) {
+                window.requestAnimationFrame(step);
+            }
+        };
+        window.requestAnimationFrame(step);
+    }
+
+    async function calculate() {
+        const area = document.getElementById('areaNum').value;
+        const material = document.getElementById('material').value;
+        const sourcing = document.getElementById('sourcing').value;
+
+        if(!area || area <= 0) {
+            alert("Please enter a valid project area.");
+            return;
+        }
+
+        const btn = document.querySelector('.btn-primary');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = "⏳ Processing Impact Data...";
+        btn.style.opacity = "0.7";
+
+        try {
+            const response = await fetch('http://127.0.0.1:5000/calculate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ area: area, material: material, sourcing: sourcing })
+            });
+            
+            const data = await response.json();
+            
+            if(data.status === "success") {
+                currentData = { area, material, sourcing, ...data }; 
+                
+                const resultsDiv = document.getElementById('results');
+                resultsDiv.style.display = 'none';
+                void resultsDiv.offsetWidth; 
+                resultsDiv.style.display = 'block';
+                
+                const carbonVal = data.carbon_total;
+                const carbonEl = document.getElementById('carbonText');
+                
+                if (carbonVal < 0) {
+                    carbonEl.classList.add('carbon-negative');
+                } else {
+                    carbonEl.classList.remove('carbon-negative');
+                }
+
+                animateValue("carbon", 0, carbonVal, 1200);
+                animateValue("cost", 0, data.estimated_cost, 1200);
+                animateValue("trees", 0, data.trees_needed, 1200);
+                animateValue("miles", 0, data.car_miles, 1200);
+                
+                const badge = document.getElementById('gradeBadge');
+                badge.innerText = data.grade.letter;
+                badge.style.backgroundColor = data.grade.color;
+
+                let suggestionsHTML = "";
+                data.suggestions.forEach(sug => {
+                    const isWarning = sug.includes("⚠️") || sug.includes("Alert");
+                    const boxClass = isWarning ? "ai-suggestion ai-warning" : "ai-suggestion";
+                    suggestionsHTML += `<div class="${boxClass}"><strong>💡 AI Insight:</strong> ${sug}</div>`;
+                });
+                document.getElementById('suggestionsBox').innerHTML = suggestionsHTML;
+                
+                drawChart(area, data.all_materials, material, data.grade.color);
+            } else {
+                alert("Server Error: " + data.message);
+            }
+        } catch (e) {
+            alert("Connection failed. Make sure your Python server (app.py) is running!");
+        } finally {
+            btn.innerHTML = originalText;
+            btn.style.opacity = "1";
+        }
+    }
+
+    function exportCSV() {
+        if (!currentData) return;
+        let csvContent = "data:text/csv;charset=utf-8,Project Area (sqm),Material,Sourcing,Total Carbon (kg CO2),Estimated Cost (INR),Trees to Offset,Car Miles Equivalent,Eco Grade\n";
+        const row = [currentData.area, currentData.material, currentData.sourcing, currentData.carbon_total, currentData.estimated_cost, currentData.trees_needed, currentData.car_miles, currentData.grade.letter].join(",");
+        csvContent += row + "\n";
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "EcoBuild_Impact_Report.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    function drawChart(area, materialsDict, selectedMaterial, selectedColor) {
+        const ctx = document.getElementById('comparisonChart').getContext('2d');
+        if (myChart) myChart.destroy();
+
+        Chart.defaults.color = document.body.getAttribute('data-theme') === 'dark' ? '#f8fafc' : '#1e293b';
+        Chart.defaults.font.family = "'Inter', system-ui, sans-serif";
+
+        const labels = Object.keys(materialsDict);
+        const dataPoints = labels.map(mat => (area * 10) * materialsDict[mat]);
+        
+        const backgroundColors = labels.map(mat => 
+            mat === selectedMaterial ? selectedColor : 
+            (document.body.getAttribute('data-theme') === 'dark' ? '#334155' : '#cbd5e1')
+        );
+
+        myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Carbon Footprint (kg CO₂)',
+                    data: dataPoints,
+                    backgroundColor: backgroundColors,
+                    borderRadius: 8,
+                    borderSkipped: false
+                }]
+            },
+            options: {
+                responsive: true,
+                animation: { duration: 1500, easing: 'easeOutQuart' },
+                plugins: {
+                    legend: { display: false },
+                    title: { display: true, text: 'Material Comparison (Lower is Better)', font: {size: 15, weight: '600'} }
+                },
+                scales: {
+                    y: { grid: { color: document.body.getAttribute('data-theme') === 'dark' ? '#1e293b' : '#f1f5f9' } },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+    }
+
+    // --- SHOOTING STAR ENGINE ---
+    function createStaticStars(count) {
+        const starsContainer = document.getElementById('static-stars');
+        let boxShadowData = '';
+        for (let i = 0; i < count; i++) {
+            const x = Math.random() * 100; 
+            const y = Math.random() * 100; 
+            const opacity = Math.random() * 0.5 + 0.1; 
+            const size = Math.random() * 2; 
+            boxShadowData += `${x}vw ${y}vh ${size}px ${size}px rgba(255, 255, 255, ${opacity}), `;
+        }
+        starsContainer.style.boxShadow = boxShadowData.slice(0, -2); 
+    }
+
+    function createShootingStar() {
+        const container = document.getElementById('shooting-stars-container');
+        if (!container) return; 
+        const star = document.createElement('div');
+        star.classList.add('shooting-star');
+
+        const startY = Math.random() * 50; 
+        const duration = Math.random() * 3 + 1.5; 
+        const delay = Math.random() * 4; 
+        const tailLength = Math.random() * 100 + 80; 
+        const thickness = Math.random() * 2 + 1; 
+
+        star.style.top = `${startY}vh`;
+        star.style.left = `${Math.random() * 50}vw`; 
+        star.style.width = `${tailLength}px`;
+        star.style.height = `${thickness}px`;
+        star.style.animation = `shoot ${duration}s ease-out ${delay}s infinite`;
+
+        container.appendChild(star);
+
+        setTimeout(() => {
+            if(container.contains(star)) {
+                container.removeChild(star);
+                createShootingStar(); 
+            }
+        }, (duration + delay) * 1000);
+    }
+
+    // Start everything when the page loads
+    window.onload = () => {
+        createStaticStars(150); 
+        for (let i = 0; i < 4; i++) {
+            setTimeout(createShootingStar, i * 1200); 
+        }
+    };
+</script>
+</body>
+</html>

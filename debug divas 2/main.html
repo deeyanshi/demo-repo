@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>CarbonIQ</title>
+  <link rel="stylesheet" href="css/main.css">
+</head>
+
+<body>
+
+<div id="splash">
+  <div id="particles-js"></div>
+
+  <h1 class="logo">CarbonIQ</h1>
+  <p class="tagline">Green in the frame, Gold in the game 🌱</p>
+  <div class="loader"></div>
+  <p class="clickHint">Click anywhere →</p>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/particles.js"></script>
+
+<script>
+/* PARTICLES */
+particlesJS("particles-js", {
+  particles: {
+    number: { value: 60 },
+    size: { value: 3 },
+    move: { speed: 2 },
+    line_linked: { enable: true, distance: 120, opacity: 0.3 }
+  }
+});
+
+/* CLICK → GO TO OPTIONS PAGE */
+document.getElementById("splash").addEventListener("click", () => {
+  document.getElementById("splash").classList.add("fadeOut");
+
+  setTimeout(() => {
+    window.location.href = "options.html";
+  }, 500);
+});
+</script>
+
+</body>
+</html>

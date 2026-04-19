@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Magical Shooting Star Background</title>
+    <style>
+        /* CSS: This part styles the page and creates the base animations. */
+
+        /* 1. Make the background a deep space gradient. */
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden; /* Prevent scrollbars */
+            background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+        }
+
+        /* 2. Style the static, twinkling stars. */
+        .stars {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            background: transparent;
+            /* We will use JavaScript to generate many shadows to create stars. */
+        }
+
+        /* 3. Style the container for the shooting stars. */
+        #shooting-stars-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* Let clicks pass through to content below. */
+            z-index: 100; /* Place it above most static content. */
+        }
+
+        /* 4. Style each individual shooting star. */
+        .shooting-star {
+            position: absolute;
+            background: linear-gradient(-45deg, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0));
+            border-radius: 999px;
+            filter: drop-shadow(0 0 6px rgba(180, 210, 255, 0.8));
+            /* Initial shape is a long, thin streak. */
+            transform: rotate(-45deg);
+        }
+
+        /* 5. Define the shooting star animation (fade in, move across, fade out, stretch). */
+        @keyframes shoot {
+            0% {
+                opacity: 0;
+                transform: rotate(-45deg) translateX(0);
+                width: 0px;
+                height: 2px;
+            }
+            10% {
+                opacity: 1; /* Fade in quickly */
+                width: 150px; /* Stretch out into a tail */
+            }
+            90% {
+                opacity: 1; /* Stay visible */
+            }
+            100% {
+                opacity: 0; /* Fade out slowly */
+                transform: rotate(-45deg) translateX(100vw); /* Move entirely across screen */
+                width: 0px; /* Compress back down */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="stars" id="static-stars"></div>
+
+    <div id="shooting-stars-container"></div>
+
+    <script>
+        // JAVASCRIPT: This part generates the stars and controls the animations.
+
+        // 1. Generate many small, static stars across the entire sky.
+        function createStaticStars(count) {
+            const starsContainer = document.getElementById('static-stars');
+            let boxShadowData = '';
+
+            for (let i = 0; i < count; i++) {
+                const x = Math.random() * 100; // Random X position (0-100%)
+                const y = Math.random() * 100; // Random Y position (0-100%)
+                const opacity = Math.random() * 0.7 + 0.3; // Random opacity (0.3-1.0)
+                const size = Math.random() * 2; // Random size (0-2px)
+
+                // Use box-shadow to create a star, which is super efficient.
+                boxShadowData += `${x}vw ${y}vh ${size}px ${size}px rgba(255, 255, 255, ${opacity}), `;
+            }
+
+            // Apply the box-shadows to the stars container.
+            starsContainer.style.boxShadow = boxShadowData.slice(0, -2); // Remove last comma and space.
+        }
+
+        // 2. Generate and animate shooting stars at random intervals.
+        function createShootingStar() {
+            const container = document.getElementById('shooting-stars-container');
+            const star = document.createElement('div');
+            star.classList.add('shooting-star');
+
+            // --- Randomize the star's properties ---
+            const startY = Math.random() * 50; // Starts from top half of screen (0-50%)
+            const duration = Math.random() * 3 + 1; // 1-4 seconds long
+            const delay = Math.random() * 5; // 0-5 second delay before start
+            const tailLength = Math.random() * 100 + 100; // 100-200px initial length
+            const thickness = Math.random() * 2 + 1; // 1-3px thick
+
+            // Set the inline styles to apply these random values.
+            star.style.top = `${startY}vh`;
+            star.style.width = `${tailLength}px`;
+            star.style.height = `${thickness}px`;
+            // Apply the 'shoot' animation with randomized duration and delay.
+            star.style.animation = `shoot ${duration}s ease-out ${delay}s infinite`;
+
+            // Add the star to the container.
+            container.appendChild(star);
+
+            // --- IMPORTANT: Clean up after the animation ends ---
+            // Without this, your page would fill up with hidden elements.
+            // Calculate total time until animation finishes (duration + delay) in milliseconds.
+            const totalTimeMs = (duration + delay) * 1000;
+            setTimeout(() => {
+                container.removeChild(star);
+                // When one ends, create a new one to keep the loop going.
+                // You can add logic here to control the number of stars at once.
+                createShootingStar();
+            }, totalTimeMs);
+        }
+
+        // --- Start everything when the page loads ---
+        // Create 300 static stars.
+        createStaticStars(300);
+
+        // Start creating shooting stars. Let's make 3 to start.
+        for (let i = 0; i < 3; i++) {
+            // Slight initial delay to prevent them all appearing at once.
+            setTimeout(createShootingStar, i * 1500);
+        }
+    </script>
+</body>
+</html>

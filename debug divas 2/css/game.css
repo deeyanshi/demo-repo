@@ -1,0 +1,44 @@
+body{
+font-family: Arial;
+background: #dff5e1;
+text-align:center;
+margin:0;
+padding:0;
+}
+
+.container{
+margin-top:80px;
+}
+
+h1{
+color:#2e7d32;
+}
+
+.tag{
+color:#444;
+}
+
+button{
+padding:12px 25px;
+margin:10px;
+border:none;
+background:#4caf50;
+color:white;
+font-size:16px;
+border-radius:5px;
+cursor:pointer;
+}
+
+button:hover{
+background:#2e7d32;
+}
+
+.answer-btn{
+display:block;
+width:250px;
+margin:10px auto;
+}
+
+.hide{
+display:none;
+}

@@ -1,0 +1,136 @@
+/* RESET */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* BODY */
+body {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  background: linear-gradient(-45deg, #0f2027, #203a43, #2c5364, #1c1c2b);
+  background-size: 400% 400%;
+  animation: gradientBG 12s ease infinite;
+
+  color: white;
+  padding: 40px 0;
+}
+
+/* BACKGROUND ANIMATION */
+@keyframes gradientBG {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* APP */
+#app {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+/* CARD */
+.container {
+  width: 360px;
+  max-width: 90%;
+  padding: 30px;
+  border-radius: 20px;
+
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(15px);
+
+  box-shadow: 0 0 40px rgba(0,255,200,0.2);
+  animation: float 4s ease-in-out infinite;
+
+  text-align: center;
+}
+
+/* FLOAT ANIMATION */
+@keyframes float {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+/* TITLES */
+.title {
+  font-size: 28px;
+  margin-bottom: 5px;
+}
+
+.subtitle {
+  font-size: 14px;
+  opacity: 0.7;
+  margin-bottom: 20px;
+}
+
+/* INPUTS */
+input, select {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+
+  border-radius: 10px;
+  border: none;
+  outline: none;
+}
+
+/* BUTTON */
+button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 10px;
+
+  border: none;
+  border-radius: 10px;
+
+  background: linear-gradient(45deg, #00ffcc, #00bfff);
+  color: black;
+  font-weight: bold;
+
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px #00ffcc;
+}
+
+/* RESULT */
+#result {
+  margin-top: 15px;
+  font-size: 14px;
+  text-align: left;
+
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+/* BUBBLES */
+.bubble {
+  position: absolute;
+  bottom: -60px;
+  border-radius: 50%;
+  background: rgba(0,255,200,0.25);
+  animation: rise linear infinite;
+}
+
+@keyframes rise {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(-110vh);
+    opacity: 0;
+  }
+}

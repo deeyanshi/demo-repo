@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>CarbonIQ Options</title>
+  <link rel="stylesheet" href="css/main.css">
+</head>
+
+<body>
+
+<!-- 🌌 Background Layers -->
+<div class="bg-base"></div>
+<div class="bg-aurora"></div>
+<!-- Tiny Particles -->
+<canvas id="particlesCanvas"></canvas>
+<!-- ✨ Content -->
+<div class="options-container">
+  <h1>CarbonIQ</h1>
+  <p class="subtitle">Choose your module</p>
+
+  <button onclick="goPage('material selector.html')">🏗 Material Intelligence Selector</button>
+  <button onclick="goPage('impact report.html')">📊 Impact Report</button>
+  <button onclick="goPage('sustainability-checker.html')">📄 Certification</button>
+  <button onclick="goPage('solution.html')"> 🤷‍♀️Solutions</button>
+  <button onclick="goPage('game.html')"> 🎮Game</button>
+</div>
+
+<script>
+function goPage(page){
+  window.location.href = page;
+}
+</script>
+<script>
+const canvas = document.getElementById("particlesCanvas");
+const ctx = canvas.getContext("2d");
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resizeCanvas();
+
+let particles = [];
+
+/* Create better particles */
+for (let i = 0; i < 120; i++) {
+  particles.push({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    size: Math.random() * 1.5 + 0.5,
+    speedX: (Math.random() - 0.5) * 0.3,
+    speedY: (Math.random() - 0.5) * 0.3,
+    opacity: Math.random()
+  });
+}
+
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  particles.forEach(p => {
+    p.x += p.speedX;
+    p.y += p.speedY;
+
+    // Wrap instead of bounce (looks better)
+    if (p.x > canvas.width) p.x = 0;
+    if (p.x < 0) p.x = canvas.width;
+    if (p.y > canvas.height) p.y = 0;
+    if (p.y < 0) p.y = canvas.height;
+
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(255,255,255,${p.opacity})`;
+    ctx.fill();
+  });
+
+  requestAnimationFrame(animate);
+}
+
+animate();
+
+window.addEventListener("resize", resizeCanvas);
+</script>
+
+</body>
+</html>

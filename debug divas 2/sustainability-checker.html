@@ -1,0 +1,218 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<title>CarbonIQ Sustainability Verifier</title>
+
+<link rel="stylesheet" href="css/sustainability.css">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+</head>
+
+<body>
+
+<div class="stars"></div>
+
+<div class="container">
+
+<h1>CarbonIQ Sustainability Verifier</h1>
+<p class="tagline">Check if your project meets sustainability standards</p>
+
+<div class="project-info">
+
+<input type="text" id="projectName" placeholder="Enter Project Name">
+
+<input type="text" id="companyName" placeholder="Enter Company Name">
+
+</div>
+
+<h2>Sustainability Checklist</h2>
+
+<form id="sustainForm">
+
+<label><input type="checkbox" value="10"> Low Carbon Construction Materials</label>
+
+<label><input type="checkbox" value="10"> Renewable Energy Integration</label>
+
+<label><input type="checkbox" value="10"> Energy Efficient Design</label>
+
+<label><input type="checkbox" value="10"> Water Conservation System</label>
+
+<label><input type="checkbox" value="10"> Waste Management Plan</label>
+
+<label><input type="checkbox" value="10"> Smart Energy Monitoring</label>
+
+<label><input type="checkbox" value="10"> Carbon Emission Reduction Plan</label>
+
+<label><input type="checkbox" value="10"> Use of Recycled Materials</label>
+
+<label><input type="checkbox" value="10"> Sustainable Transportation Access</label>
+
+<label><input type="checkbox" value="10"> Green Roof / Urban Greening</label>
+
+</form>
+
+<button onclick="calculateScore()">Check Project Score</button>
+
+<div class="score-box">
+
+<h2 id="score">Score : 0%</h2>
+
+<div class="progress-bar">
+<div id="progress"></div>
+</div>
+
+</div>
+
+<div id="certificate" class="certificate hidden">
+
+<h2>CarbonIQ Sustainability Certificate</h2>
+
+<p id="certProject"></p>
+<p id="certCompany"></p>
+
+<p class="verified">✔ VERIFIED SUSTAINABLE PROJECT</p>
+
+<button onclick="downloadCertificate()">Download Certificate (PDF)</button>
+
+</div>
+
+</div>
+
+<script src="javascript/sustainability.js"></script>
+
+</body>
+</html> -->
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<title>CarbonIQ Sustainability Judge</title>
+
+<link rel="stylesheet" href="css/sustainability.css">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+</head>
+
+<body>
+
+<div class="bubbles">
+<span></span><span></span><span></span><span></span>
+<span></span><span></span><span></span><span></span>
+<span></span><span></span>
+</div>
+
+<div class="container">
+
+<h1>CarbonIQ Sustainability Judge</h1>
+
+<p class="tagline">
+Answer the questions to evaluate if your project is sustainable
+</p>
+
+<input type="text" id="projectName" placeholder="Project Name">
+
+<input type="text" id="companyName" placeholder="Company / Team Name">
+
+<h2>Sustainability Questionnaire</h2>
+
+<form id="quizForm">
+
+<label>
+Does your project use renewable energy?
+<select>
+<option value="10">Yes</option>
+<option value="0">No</option>
+</select>
+</label>
+
+<label>
+Are recycled materials used?
+<select>
+<option value="10">Yes</option>
+<option value="0">No</option>
+</select>
+</label>
+
+<label>
+Does your design reduce energy consumption?
+<select>
+<option value="10">Yes</option>
+<option value="0">No</option>
+</select>
+</label>
+
+<label>
+Is there a waste management system?
+<select>
+<option value="10">Yes</option>
+<option value="0">No</option>
+</select>
+</label>
+
+<label>
+Does the project reduce carbon emissions?
+<select>
+<option value="10">Yes</option>
+<option value="0">No</option>
+</select>
+</label>
+
+<label>
+Does the project encourage sustainable transportation?
+<select>
+<option value="10">Yes</option>
+<option value="0">No</option>
+</select>
+</label>
+
+<label>
+Does the project conserve water?
+<select>
+<option value="10">Yes</option>
+<option value="0">No</option>
+</select>
+</label>
+
+<label>
+Does the project use eco-friendly materials?
+<select>
+<option value="10">Yes</option>
+<option value="0">No</option>
+</select>
+</label>
+
+</form>
+
+<button onclick="evaluateProject()">Evaluate Project</button>
+
+<div id="result"></div>
+
+<div id="certificate" class="certificate hidden">
+
+<h2>CarbonIQ Sustainability Certificate</h2>
+
+<p id="certProject"></p>
+<p id="certCompany"></p>
+
+<p class="verified">✔ VERIFIED SUSTAINABLE PROJECT</p>
+
+<button onclick="downloadCertificate()">Download Certificate</button>
+
+</div>
+
+</div>
+
+<script src="javascript/sustainability.js"></script>
+
+</body>
+</html>
